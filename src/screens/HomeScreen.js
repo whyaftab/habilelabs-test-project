@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { View, SectionList, Text, Switch, ScrollView } from "react-native";
-import { RefactorDataObj } from "../constant";
+import { SectionList, ScrollView } from "react-native";
+import { connect } from "react-redux";
+import { fetchProducts } from "../actions/productActions";
 import {
   SearchBox,
   SwitchWithText,
@@ -9,59 +10,22 @@ import {
   ItemSeparator,
 } from "../components";
 
-const Url =
-  "http://my-json-server.typicode.com/habilelabs/fake-products/products";
-
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
   state = {
-    rowData: [],
-    data: [],
     isOnlyInStock: false,
-    searchText: "",
-    loading: false,
+  };
+
+  componentDidMount = () => {
+    this.props
+      .fetchProducts()
+      .then((s) => console.log(s))
+      .catch((e) => console.log(e));
   };
 
   toggleOnlyInStock = () => {
     this.setState(({ isOnlyInStock }) => ({
       isOnlyInStock: !isOnlyInStock,
     }));
-  };
-
-  componentDidMount = () => this.fetchData();
-
-  fetchData = () => {
-    this.setState({
-      loading: true,
-    });
-
-    fetch(Url)
-      .then((response) => response.json())
-      .then((data) => {
-        const newData = RefactorDataObj(data);
-
-        this.setState({
-          searchText: "",
-          data: newData,
-          rowData: data,
-          loading: false,
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  updateSeachText = (text) => {
-    const filteredObj = this.state.rowData.filter((item) =>
-      item.name.toLowerCase().includes(text.toLowerCase())
-    );
-
-    const newData = RefactorDataObj(filteredObj);
-
-    this.setState({
-      data: newData,
-      searchText: text,
-    });
   };
 
   render() {
@@ -116,3 +80,10 @@ const styles = {
     height: 4,
   },
 };
+
+const mapStateToProps = (state) => {
+  const { searchText, data, loading } = state.product;
+  return { searchText, data, loading };
+};
+
+export default connect(mapStateToProps, { fetchProducts })(HomeScreen);

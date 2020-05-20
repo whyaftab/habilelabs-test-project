@@ -1,7 +1,17 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { createStore, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+import ReduxThunk from "redux-thunk";
+import reducers from "./src/reducers";
 import HomeScreen from "./src/screens/HomeScreen";
 
+const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
+
 export default function App() {
-  return <HomeScreen />;
+  return (
+    <Provider store={store}>
+      <HomeScreen />
+    </Provider>
+  );
 }
