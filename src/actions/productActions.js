@@ -1,25 +1,26 @@
-import { FETCHING_PRODUCTS, FETCH_PRODUCTS } from "./actionTypes";
-import Axios from "axios";
+import {
+  FETCHING_PRODUCTS,
+  SUCCESSFULLY_FETCHED_PRODUCTS,
+  SEARCH_PRODUCT,
+} from "./actionTypes";
+
 const Url =
   "https://my-json-server.typicode.com/habilelabs/fake-products/products";
 
 export const fetchProducts = () => (dispatch) => {
-  console.log("ccale");
   dispatch({ type: FETCHING_PRODUCTS });
-  return Axios.get(Url, {
-    headers: {
-      Accept: "application/json",
-    },
-  })
+  return fetch(Url)
+    .then((response) => response.json())
     .then((responseJson) => {
-      console.log("in");
-
-      dispatch({ type: FETCH_PRODUCTS, payload: responseJson.data });
-      return Promise.resolve(responseJson.data);
+      dispatch({ type: SUCCESSFULLY_FETCHED_PRODUCTS, payload: responseJson });
+      return Promise.resolve(responseJson);
     })
     .catch((error) => {
-      console.log("no");
-
       return Promise.reject(error);
     });
 };
+
+export const searchProduct = (text) => ({
+  type: SEARCH_PRODUCT,
+  payload: text,
+});

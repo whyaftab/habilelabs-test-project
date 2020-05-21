@@ -1,8 +1,8 @@
 import {
-  FETCH_PRODUCTS,
+  SUCCESSFULLY_FETCHED_PRODUCTS,
   FETCHING_PRODUCTS,
   SEARCH_PRODUCT,
-} from "../actions/actionTypes";
+} from "../actions";
 import { RefactorDataObj } from "../constant";
 
 const initState = {
@@ -17,16 +17,16 @@ export default (state = initState, action) => {
     case FETCHING_PRODUCTS:
       return { ...initState, loading: true };
 
-    case FETCH_PRODUCTS:
+    case SUCCESSFULLY_FETCHED_PRODUCTS:
       const newData = RefactorDataObj(action.payload);
-      return { ...state, rowData: action.payload, data: newData };
+      return { ...initState, rowData: action.payload, data: newData };
 
     case SEARCH_PRODUCT:
       const filteredObj = state.rowData.filter((item) =>
         item.name.toLowerCase().includes(action.payload.toLowerCase())
       );
       const searchedData = RefactorDataObj(filteredObj);
-      return { ...initState, searchText: action.payload, data: searchedData };
+      return { ...state, searchText: action.payload, data: searchedData };
 
     default:
       return state;

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { SectionList, ScrollView } from "react-native";
 import { connect } from "react-redux";
-import { fetchProducts } from "../actions/productActions";
+import { fetchProducts, searchProduct } from "../actions";
 import {
   SearchBox,
   SwitchWithText,
@@ -15,25 +15,20 @@ class HomeScreen extends Component {
     isOnlyInStock: false,
   };
 
-  componentDidMount = () => {
-    this.props
-      .fetchProducts()
-      .then((s) => console.log(s))
-      .catch((e) => console.log(e));
-  };
+  componentDidMount = () => this.props.fetchProducts();
 
-  toggleOnlyInStock = () => {
+  toggleOnlyInStock = () =>
     this.setState(({ isOnlyInStock }) => ({
       isOnlyInStock: !isOnlyInStock,
     }));
-  };
 
   render() {
-    const { data, isOnlyInStock, searchText } = this.state;
+    const { isOnlyInStock } = this.state;
+    const { data, searchText, loading } = this.props;
 
     return (
       <ScrollView style={styles.container}>
-        <SearchBox value={searchText} onChangeText={this.updateSeachText} />
+        <SearchBox value={searchText} onChangeText={this.props.searchProduct} />
         <SwitchWithText
           value={isOnlyInStock}
           onChange={this.toggleOnlyInStock}
@@ -60,8 +55,8 @@ class HomeScreen extends Component {
             <SectionHeading text={category} />
           )}
           contentContainerStyle={{ flexGrow: 1 }}
-          refreshing={this.state.loading}
-          onRefresh={this.fetchData}
+          refreshing={loading}
+          onRefresh={this.props.fetchProducts}
           ItemSeparatorComponent={() => <ItemSeparator />}
           SectionSeparatorComponent={() => <ItemSeparator />}
         />
@@ -86,4 +81,6 @@ const mapStateToProps = (state) => {
   return { searchText, data, loading };
 };
 
-export default connect(mapStateToProps, { fetchProducts })(HomeScreen);
+export default connect(mapStateToProps, { fetchProducts, searchProduct })(
+  HomeScreen
+);
